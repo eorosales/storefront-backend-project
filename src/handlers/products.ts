@@ -4,7 +4,6 @@ import { Product, ProductStore } from '../models/product';
 const store = new ProductStore();
 
 const index = async (_req: Request, res: Response) => {
-  console.log('Index route')
   const products = await store.index();
   res.json(products);
 }
