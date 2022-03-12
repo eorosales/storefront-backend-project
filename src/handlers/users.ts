@@ -1,32 +1,48 @@
+//* USER REQUEST HANDLERS *//
 import express, { Request, Response } from 'express'
+import dotenv from 'dotenv'
 import { User, UserStore } from '../models/user'
+import jwt from 'jsonwebtoken'
 
+dotenv.config();
 const store = new UserStore();
 
 const index = async (_req: Request, res: Response) => {
   const users = await store.index();
+  console.log(process.env.TOKEN_SECRET as string);
   res.json(users);
 }
 
 const show = async (req: Request, res: Response) => {
-  const user = await store.show(req.body.id);
+  const user:User = await store.show(req.params.id);
   res.json(user);
 }
 
 const create = async (req: Request, res: Response) => {
-  const u: User = {
-    id: req.body.id,
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-    password: req.body.password
+  const user: User = {
+    firstName: req.body.first_name as string,
+    lastName: req.body.last_name as string,
+    password: req.body.password as string
   }
-  const newUser: User = await store.create(u);
-  res.json(newUser);
+  try { 
+    const newUser = await store.create(user);
+    let token = jwt.sign(newUser, process.env.TOKEN_SECRET as jwt.Secret);
+    res.json(token);
+  } catch (err) {
+    res.status(400)
+    res.json(err)
+  }
 }
 
 const authenticate = async (req: Request, res: Response) => {
-  const authenticated = await store.authenticate(req.body.first_name, req.body.last_name, req.body.password);
-  res.json(authenticated)
+  const user: User = {
+    firstName: req.body.first_name,
+    lastName: req.body.last_name,
+    password: req.body.password
+  }
+  const u = await store.authenticate(user.firstName, user.lastName, user.password);
+  const token = jwt.sign({ user: u }, process.env.TOKEN_SECRET as string);
+  res.json(token)
 }
 
 const user_routes = (app: express.Application) => {
