@@ -1,6 +1,7 @@
 //* USER REQUEST HANDLERS *//
 import express, { Request, Response } from 'express'
 import dotenv from 'dotenv'
+import { verifyAuthToken } from '../utilities/verifyAuthToken'
 import { User, UserStore } from '../models/user'
 import jwt from 'jsonwebtoken'
 
@@ -18,12 +19,13 @@ const show = async (req: Request, res: Response) => {
   res.json(user);
 }
 
-const create = async (req: Request, res: Response) => {
+const create = async (_req: Request, res: Response) => {
   const user: User = {
-    firstName: req.body.first_name as string,
-    lastName: req.body.last_name as string,
-    password: req.body.password as string
+    firstName: _req.body.first_name as string,
+    lastName: _req.body.last_name as string,
+    password: _req.body.password as string
   }
+ 
   try { 
     const newUser = await store.create(user);
     let token = jwt.sign(newUser, process.env.TOKEN_SECRET as jwt.Secret);
@@ -46,9 +48,9 @@ const authenticate = async (req: Request, res: Response) => {
 }
 
 const user_routes = (app: express.Application) => {
-  app.get('/users', index);
-  app.get('/users/:id', show);
-  app.post('/users', create);
+  app.get('/users', verifyAuthToken, index);
+  app.get('/users/:id', verifyAuthToken, show);
+  app.post('/users', verifyAuthToken, create);
   app.post('/users/authenticate', authenticate)
 }
 
