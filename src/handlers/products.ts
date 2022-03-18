@@ -1,8 +1,7 @@
 //* PRODUCT REQUEST HANDLERS *//
 import express, { Request, Response } from 'express'
 import { Product, ProductStore } from '../models/product'
-import jwt from 'jsonwebtoken'
-import { verifyAuthToken } from '../utilities/verifyAuthToken'
+import { verifyAuthToken } from '../services/verifyAuthToken'
  
 const store = new ProductStore();
 

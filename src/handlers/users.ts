@@ -1,7 +1,7 @@
 //* USER REQUEST HANDLERS *//
 import express, { Request, Response } from 'express'
 import dotenv from 'dotenv'
-import { verifyAuthToken } from '../utilities/verifyAuthToken'
+import { verifyAuthToken } from '../services/verifyAuthToken'
 import { User, UserStore } from '../models/user'
 import jwt from 'jsonwebtoken'
 
