@@ -1,8 +1,9 @@
 //* PRODUCT MODEL *//
-import client from '../database';
+import { client } from '../database';
 
 // Product type
 export type Product = {
+  id?: number
   name: string,
   price: number,
   category: string
@@ -46,5 +47,13 @@ export class ProductStore {
     } catch(err) {
       throw new Error(`Could not create a new product. Error: ${err}`)
     }
+  }
+  // Delete product method
+  async delete(id:string):Promise<Product> {
+    const conn = await client.connect();
+    const sql = 'DELETE FROM products WHERE id=($1)';
+    const result = await conn.query(sql, [id]);
+    conn.release();
+    return result.rows[0];
   }
 }

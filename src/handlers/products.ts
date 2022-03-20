@@ -18,7 +18,7 @@ const show = async (req: Request, res: Response) => {
 const create = async (req: Request, res: Response) => {
   const product: Product = {
     name: req.body.name,
-    price: req.body.price,
+    price: parseInt(`${req.body.price}`),
     category: req.body.category
   }
 
@@ -26,11 +26,16 @@ const create = async (req: Request, res: Response) => {
   res.json(newProduct);
 }
 
+const destroy = async (req: Request, res: Response) => {
+  const deletedProduct = await store.delete(req.params.id);
+  res.json(deletedProduct);
+}
 
 const product_routes = (app: express.Application) => {
   app.get('/products', index);
   app.get('/products/:id', show);
-  app.post('/products', create);
+  app.post('/products', verifyAuthToken, create);
+  app.delete('/products/:id', verifyAuthToken, destroy);
 }
 
 export default product_routes;

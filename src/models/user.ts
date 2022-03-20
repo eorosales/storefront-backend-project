@@ -1,8 +1,7 @@
 //* USER MODEL *//
-import client from '../database'
+import { client } from '../database'
 import dotenv from 'dotenv'
 import bcrypt from 'bcrypt'
-import { ModuleResolutionKind } from 'typescript';
 
 // Allow access to .env
 dotenv.config();

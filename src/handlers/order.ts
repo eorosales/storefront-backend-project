@@ -1,6 +1,7 @@
 //* ORDER REQUEST HANDLERS *//
 import express, { Request, Response } from 'express'
 import { Order, OrderStore } from '../models/order'
+import { verifyAuthToken } from '../services/verifyAuthToken'
 
 const store = new OrderStore();
 
@@ -47,9 +48,9 @@ const addProduct = async (req: Request, res: Response) => {
 
 const order_routes = (app: express.Application) => {
   app.get('/orders', index);
-  app.get('/orders/:id', show);
-  app.post('/orders', create);
-  app.post('/orders/:id/products', addProduct);
+  app.get('/orders/:id', verifyAuthToken, show);
+  app.post('/orders', verifyAuthToken, create);
+  app.post('/orders/:id/products', verifyAuthToken, addProduct);
 }
 
 export default order_routes;
