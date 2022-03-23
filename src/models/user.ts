@@ -30,7 +30,6 @@ export class UserStore {
       const conn = await client.connect();
       const result = await conn.query(sql, [id]);
       conn.release();
-      console.log(result.rows)
       return result.rows[0];
     } catch(err) {
       throw new Error(`Could not find product ${id}. Error: ${err}`) 

@@ -1,5 +1,5 @@
-import { client } from '../../database';
-import { Product, ProductStore } from '../product';
+import { client } from '../database';
+import { Product, ProductStore } from '../models/product';
 
 const store = new ProductStore();
 

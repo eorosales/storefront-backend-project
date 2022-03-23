@@ -12,7 +12,7 @@ export class DashboardQueries {
       conn.release();
       return result.rows;
     } catch(err) {
-      throw new Error(err);
+      throw new Error(`${err}`);
     }
   }
 }
