@@ -41,7 +41,7 @@ export class OrderStore {
   async create(o:Order):Promise<Order> {
     try {
       // @ts-ignore
-      const sql = 'INSERT INTO orders (product_id, quantity, user_id, status) VALUES ($1, $2, $3, $4) RETURNIG *';
+      const sql = 'INSERT INTO orders (product_id, quantity, user_id, status) VALUES ($1, $2, $3, $4) RETURNING *';
       const conn = await client.connect();
       const result = await conn.query(sql, [o.productId, o.quantity, o.userId, o.status]);
       conn.release();
@@ -55,7 +55,7 @@ export class OrderStore {
   // Current Order by User
   async currentOrder(o:Order):Promise<Order> {
     const conn = await client.connect();
-    const sql = 'SELECT * FROM orders WHERE product_id = ($1) ';
+    const sql = 'SELECT * FROM order_products WHERE user_id = ($1) ';
     const results = await conn.query(sql, [o.userId]);
     conn.release();
     return results.rows[0];

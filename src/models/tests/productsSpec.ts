@@ -3,23 +3,10 @@ import { Product, ProductStore } from '../product';
 
 const store = new ProductStore();
 
-const testReset = async () => {
-  const conn = await client.connect();
-  const sql = 'ALTER SEQUENCE products_id_seq RESTART with 1;';
-  await conn.query(sql);
-  conn.release();
-}
-
-testReset();
-
 describe("Product Model", () => {
 
   it("should have an index method", () => {
     expect(store.index).toBeDefined();
-  })
-
-  it("index method should return a list of products", () => {    
-    expect(store.index()).toBeDefined();
   })
 
   it("should have show method", () => {
@@ -28,6 +15,10 @@ describe("Product Model", () => {
 
   it("should have create method", () => {
     expect(store.create).toBeDefined();
+  })
+
+  it("should have delete method", () => {
+    expect(store.delete).toBeDefined();
   })
 
   it("create method should add a new product", async () => {
@@ -44,6 +35,11 @@ describe("Product Model", () => {
     })
   })
 
+  it("index method should return a list of products", async () => {    
+    const result = await store.index();
+    expect(result).not.toBe([]);
+  })
+
   it("show method should return the correct product", async () => {
     const result = await store.show("1");
     expect(result).toEqual({
@@ -58,5 +54,11 @@ describe("Product Model", () => {
     await store.delete("1");
     const result = await store.index();
     expect(result).toEqual([]); 
+  })
+  afterAll(async () => {
+    const conn = await client.connect();
+    const sql = 'DELETE FROM products; ALTER SEQUENCE products_id_seq RESTART with 1;';
+    await conn.query(sql);
+    conn.release();
   })
 })
