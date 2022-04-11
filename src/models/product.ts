@@ -10,7 +10,7 @@ export type Product = {
 }
 
 export class ProductStore {
-  // Show all products method
+  // Show all Products 
   async index():Promise<Product[]> {  
     try {
       const conn = await client.connect();
@@ -22,7 +22,7 @@ export class ProductStore {
       throw new Error(`Could not find products. Error: ${err}`);
     }
   }
-  // Show product by id method
+  // READ Product by id 
   async show(id:string):Promise<Product> {
     try {
       const conn = await client.connect();
@@ -35,7 +35,7 @@ export class ProductStore {
       throw new Error(`Could not find product with id of ${id}. Error: ${err}`);
     }
   }
-  // Create product method
+  // CREATE Product
   async create(p:Product):Promise<Product> {
     try {
       const conn = await client.connect();
@@ -48,12 +48,16 @@ export class ProductStore {
       throw new Error(`Could not create a new product. Error: ${err}`)
     }
   }
-  // Delete product method
+  // DELETE Product
   async delete(id:string):Promise<Product> {
-    const conn = await client.connect();
-    const sql = 'DELETE FROM products WHERE id=($1) RETURNING *';
-    const result = await conn.query(sql, [id]);
-    conn.release();
-    return result.rows[0];
+    try {
+      const conn = await client.connect();
+      const sql = 'DELETE FROM products WHERE id=($1) RETURNING *';
+      const result = await conn.query(sql, [id]);
+      conn.release();
+      return result.rows[0];
+    }catch(err) {
+      throw new Error(`Coudl not delete Product. ${err}`)
+    }
   }
 }

@@ -5,7 +5,7 @@ const store = new ProductStore();
 
 describe("Product Model", () => {
 
-  it("should have an index method", () => {
+  it("should have index method", () => {
     expect(store.index).toBeDefined();
   })
 
@@ -29,7 +29,7 @@ describe("Product Model", () => {
     });
     expect(result).toEqual({
       "id": 1,
-      "name": 'Ilford HP5 Plus',
+      "name": "Ilford HP5 Plus",
       "price": 6,
       "category": "film"
     })
@@ -50,11 +50,13 @@ describe("Product Model", () => {
     });
   })
 
-  it("delete method should remove the product", async () => {
-    await store.delete("1");
-    const result = await store.index();
-    expect(result).toEqual([]); 
+  it("delete method should delete the correct product", async () => {
+    const deletedProduct = await store.delete("1");
+    const indexProducts = await store.index();
+    expect(indexProducts).not.toContain(deletedProduct)
   })
+
+  // DB teardown
   afterAll(async () => {
     const conn = await client.connect();
     const sql = 'DELETE FROM products; ALTER SEQUENCE products_id_seq RESTART with 1;';

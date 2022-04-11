@@ -13,7 +13,7 @@ describe("User Model", () => {
     "password": "password123"
   }
 
-  it("should have an index method", () => {
+  it("should have index method", () => {
     expect(store.index).toBeDefined();
   })
 
@@ -23,6 +23,10 @@ describe("User Model", () => {
 
   it("should have create method", () => {
     expect(store.create).toBeDefined();
+  })
+
+  it("should have delete method", () => {
+    expect(store.delete).toBeDefined();
   })
 
   describe("create method", () => {
@@ -41,7 +45,12 @@ describe("User Model", () => {
     })
   })
 
-  it("shows the correct user", async () => {
+  it("index method should return a list of users", async() => {
+    const result = await store.index();
+    expect(result).not.toBe([]);
+  })
+
+  it("show method should return the correct user", async () => {
     const showUser = await store.show("1");
     const conn = await client.connect();
     const sql = 'SELECT * FROM users WHERE id=($1)';
@@ -50,12 +59,19 @@ describe("User Model", () => {
     expect(showUser).toEqual(result.rows[0]);
   })
 
-  it("authenticates user", async () => {
+  it("authenticate method should generate token", async () => {
     const u = await store.authenticate(user.firstName, user.lastName, user.password);
     const token = jwt.sign({ user: u }, process.env.TOKEN_SECRET as string);
     expect(token).toBeDefined();
   })
 
+  it("delete method should delete the correct user", async () => {
+    const deletedUser = await store.delete("1");
+    const indexUsers = await store.index();
+    expect(indexUsers).not.toContain(deletedUser)
+  })
+
+  // DB teardown 
   afterAll(async() => {
     const conn = await client.connect();
     const sql = 'DELETE FROM users; ALTER SEQUENCE users_id_seq RESTART with 1';

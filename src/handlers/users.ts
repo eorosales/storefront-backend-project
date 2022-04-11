@@ -8,18 +8,21 @@ import jwt from 'jsonwebtoken'
 dotenv.config();
 const store = new UserStore();
 
-const index = async (_req: Request, res: Response) => {
+// INDEX Users Handler
+const index = async (_req: Request, res: Response):Promise<void> => {
   const users = await store.index();
   console.log(process.env.TOKEN_SECRET as string);
   res.json(users);
 }
 
-const show = async (req: Request, res: Response) => {
+// READ User Handler
+const show = async (req: Request, res: Response):Promise<void> => {
   const user:User = await store.show(req.params.id);
   res.json(user);
 }
 
-const create = async (_req: Request, res: Response) => {
+// CREATE User Handler
+const create = async (_req: Request, res: Response):Promise<void> => {
   const user: User = {
     firstName: _req.body.first_name as string,
     lastName: _req.body.last_name as string,
@@ -36,7 +39,14 @@ const create = async (_req: Request, res: Response) => {
   }
 }
 
-const authenticate = async (req: Request, res: Response) => {
+// DELETE User Handler
+const destroy = async (req: Request, res: Response):Promise<void> => {
+  const deletedUser = await store.delete(req.params.id);
+  res.json(deletedUser);
+}
+
+// Authenticate User Handler
+const authenticate = async (req: Request, res: Response):Promise<void> => {
   const user: User = {
     firstName: req.body.first_name,
     lastName: req.body.last_name,
@@ -47,11 +57,13 @@ const authenticate = async (req: Request, res: Response) => {
   res.json(token)
 }
 
+// User Model Endpoints
 const user_routes = (app: express.Application) => {
   app.get('/users', verifyAuthToken, index);
   app.get('/users/:id', verifyAuthToken, show);
   app.post('/users', create);
   app.post('/users/authenticate', authenticate)
+  app.delete('/users/:id', verifyAuthToken, destroy);
 }
 
 export default user_routes;
