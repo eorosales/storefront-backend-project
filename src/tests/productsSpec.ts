@@ -17,6 +17,10 @@ describe("Product Model", () => {
     expect(store.create).toBeDefined();
   })
 
+  it("should have update method", () => {
+    expect(store.update).toBeDefined();
+  })
+
   it("should have delete method", () => {
     expect(store.delete).toBeDefined();
   })
@@ -48,6 +52,17 @@ describe("Product Model", () => {
       "price": 6,
       "category": "film"
     });
+  })
+
+  it("update method should update the correct product", async () => {
+    const updatedProduct = await store.update({
+      "id": 1,
+      "name": "Ilford FP4",
+      "price": 5,
+      "category": "film" 
+    })
+    const product = await store.show("1");
+    expect(product).toEqual(updatedProduct); 
   })
 
   it("delete method should delete the correct product", async () => {

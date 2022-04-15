@@ -1,11 +1,9 @@
-# Storefront Backend Project
+# Storeront Backend Project
 
-## Getting Started
+## Techologies Used
 
-This repo contains a basic Node and Express app to get you started in constructing an API. To get started, clone this repo and run `yarn` in your terminal at the project root.
+This project makes use of the following libraries:
 
-## Required Technologies
-Your application must make use of the following libraries:
 - Postgres for the database
 - Node/Express for the application logic
 - dotenv from npm for managing environment variables
@@ -13,42 +11,111 @@ Your application must make use of the following libraries:
 - jsonwebtoken from npm for working with JWTs
 - jasmine from npm for testing
 
-## Steps to Completion
+## Project Set Up
 
-### 1. Plan to Meet Requirements
+Clone the repository onto your local machine or download the project files and cd into the storefront-backend-project directory.
 
-In this repo there is a `REQUIREMENTS.md` document which outlines what this API needs to supply for the frontend, as well as the agreed upon data shapes to be passed between front and backend. This is much like a document you might come across in real life when building or extending an API. 
+```
+git clone https://github.com/eorosales/storefront-backend-project.git
+cd storefront-backend-project
+```
 
-Your first task is to read the requirements and update the document with the following:
-- Determine the RESTful route for each endpoint listed. Add the RESTful route and HTTP verb to the document so that the frontend developer can begin to build their fetch requests.    
-**Example**: A SHOW route: 'blogs/:id' [GET] 
+Run yarn in the terminal at the project root to install all necessary packages.
 
-- Design the Postgres database tables based off the data shape requirements. Add to the requirements document the database tables and columns being sure to mark foreign keys.   
-**Example**: You can format this however you like but these types of information should be provided
-Table: Books (id:varchar, title:varchar, author:varchar, published_year:varchar, publisher_id:string[foreign key to publishers table], pages:number)
+```
+yarn
+```
 
-**NOTE** It is important to remember that there might not be a one to one ratio between data shapes and database tables. Data shapes only outline the structure of objects being passed between frontend and API, the database may need multiple tables to store a single shape. 
+Start up the application stack using the included _docker-compose.yaml_ configuration file.
 
-### 2.  DB Creation and Migrations
+```
+docker-compose up
+```
 
-Now that you have the structure of the databse outlined, it is time to create the database and migrations. Add the npm packages dotenv and db-migrate that we used in the course and setup your Postgres database. If you get stuck, you can always revisit the database lesson for a reminder. 
+Run necessary database migrations to set up the database.
 
-You must also ensure that any sensitive information is hashed with bcrypt. If any passwords are found in plain text in your application it will not pass.
+```
+db-migrate up
+```
 
-### 3. Models
+Run yarn watch to build the distribution folder and spin up the server.
 
-Create the models for each database table. The methods in each model should map to the endpoints in `REQUIREMENTS.md`. Remember that these models should all have test suites and mocks.
+```
+yarn watch
+```
 
-### 4. Express Handlers
+With the project sturcture properly set up, the backend will be running on _port 3000_ and the database exposed on _port 5432_.
+The project and database is now properly set up to handle requests using the following provided API endpoints.
 
-Set up the Express handlers to route incoming requests to the correct model method. Make sure that the endpoints you create match up with the enpoints listed in `REQUIREMENTS.md`. Endpoints must have tests and be CORS enabled. 
+---
 
-### 5. JWTs
+## Testing
 
-Add JWT functionality as shown in the course. Make sure that JWTs are required for the routes listed in `REQUIUREMENTS.md`.
+Once the project is set up, you can run tests utilizing the Jasmine library. Run the following in terminal to run the testing suite.
 
-### 6. QA and `README.md`
+```
+yarn test
+```
 
-Before submitting, make sure that your project is complete with a `README.md`. Your `README.md` must include instructions for setting up and running your project including how you setup, run, and connect to your database. 
+---
 
-Before submitting your project, spin it up and test each endpoint. If each one responds with data that matches the data shapes from the `REQUIREMENTS.md`, it is ready for submission!
+## RESTful API Routes and Endpoints
+
+The following is a map of the database tables, their schemas, routes and associated endpoints.
+
+### Products API Routes
+
+| Method | Description            | Verb | Endpoint                            |
+| ------ | ---------------------- | ---- | ----------------------------------- |
+| Index  | Show all Products      | GET  | http://localhost:3000/products      |
+| Show   | Show a Product by id   | GET  | http://localhost:3000/products/{id} |
+| Create | Add a new Product row  | POST | http://localhost:3000/products      |
+| Delete | Delete a Product by id | DEL  | http://localhost:3000/products/{id} |
+
+### Products Table Scehma
+
+| Column   | Type               |
+| -------- | ------------------ |
+| id       | SERIAL PRIMARY KEY |
+| name     | VARCHAR(255)       |
+| price    | integer            |
+| category | VARCHAR(255)       |
+
+### Users API Routes
+
+| Method       | Description         | Verb | Endpoint                                 |
+| ------------ | ------------------- | ---- | ---------------------------------------- |
+| Index        | Show all Users      | GET  | http://localhost:3000/users              |
+| Show         | Show a User by id   | GET  | http://localhost:3000/users/{id}         |
+| Create       | Add a new User row  | POST | http://localhost:3000/users              |
+| Authenticate | Authenticate User   | POST | http://localhost:3000/users/authenticate |
+| Delete       | Delete a User by id | DEL  | http://localhost:3000/users/{id}         |
+
+### Users Table Schema
+
+| Column          | Type               |
+| --------------- | ------------------ |
+| id              | SERIAL PRIMARY KEY |
+| first_name      | VARCHAR(255)       |
+| last_name       | VARCHAR(255)       |
+| password_digest | VARCHAR(255)       |
+
+### Orders API Routes
+
+| Method     | Description            | Verb | Endpoint                                        |
+| ---------- | ---------------------- | ---- | ----------------------------------------------- |
+| Index      | Show all Orders        | GET  | http://localhost:3000/users                     |
+| Show       | Show an Order by id    | GET  | http://localhost:3000/users/{id}                |
+| Create     | Add a new Order row    | POST | http://localhost:3000/users                     |
+| AddProduct | Add a Product to Order | POST | http://localhost:3000/users/{order.id}/products |  |
+| Delete     | Delete an Order by id  | DEL  | http://localhost:3000/users/{id}                |
+
+### Orders Table Schema
+
+| Column     | Type               | Reference    |
+| ---------- | ------------------ | ------------ |
+| id         | SERIAL PRIMARY KEY |              |
+| product_id | INTEGER REFERENCES | products(id) |
+| quantity   | integer            |              |
+| user_id    | INTEGER REFERENCES | users(id)    |
+| status     | VARCHAR(10)        |              |

@@ -40,6 +40,21 @@ const create = async (req: Request, res: Response):Promise<void> => {
     res.json(err);
   } 
 }
+// UPDATE Product handler 
+const update = async (req:Request, res: Response):Promise<void> => {
+  const update:Product = {
+    id: parseInt(req.params.id),
+    name: req.body.name,
+    price: req.body.price,
+    category: req.body.category
+  }
+  try {
+    const updatedProduct = await store.update(update);
+    res.json(updatedProduct);
+  } catch(err){
+    throw new Error(`Could not update product. ${err}`);
+  }
+}
 // DELETE Product handler
 const destroy = async(req: Request, res: Response):Promise<void> => {
   try {
@@ -54,6 +69,7 @@ const product_routes = (app: express.Application) => {
   app.get('/products', index);
   app.get('/products/:id', show);
   app.post('/products', verifyAuthToken, create);
+  app.put('/products/:id', verifyAuthToken, update);
   app.post('/products/:id', verifyAuthToken, destroy);
 }
 

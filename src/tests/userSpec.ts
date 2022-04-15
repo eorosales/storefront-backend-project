@@ -29,21 +29,19 @@ describe("User Model", () => {
     expect(store.delete).toBeDefined();
   })
 
-  describe("create method", () => {
-
-    it("creates new user", async () => {
-      const newUser = await store.create(user);
-      expect(newUser).toBeDefined();
-    })
-
-    it("encrypts password", async () => {
-      await store.create(user);
-      const conn = await client.connect();
-      const sql = 'SELECT * FROM users WHERE first_name=($1) AND last_name=($2)';
-      const result = await conn.query(sql, ["test", "user"]);
-      expect(result.rows[0].password_digest).not.toBe(user.password);
-    })
+  it("creates method should add a new user", async () => {
+    const newUser = await store.create(user);
+    expect(newUser).toBeDefined();
   })
+
+  it("craeted user's passwords should be encrypted", async () => {
+    await store.create(user);
+    const conn = await client.connect();
+    const sql = 'SELECT * FROM users WHERE first_name=($1) AND last_name=($2)';
+    const result = await conn.query(sql, ["test", "user"]);
+    expect(result.rows[0].password_digest).not.toBe(user.password);
+  })
+
 
   it("index method should return a list of users", async() => {
     const result = await store.index();

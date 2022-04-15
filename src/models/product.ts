@@ -48,6 +48,18 @@ export class ProductStore {
       throw new Error(`Could not create a new product. Error: ${err}`)
     }
   }
+  // UPDATE Product
+  async update(p:Product):Promise<Product> {
+    try {
+      const conn = await client.connect();
+      const sql = 'UPDATE products SET name=$2, price=$3, category=$4 WHERE id=$1 RETURNING *';
+      const result = await conn.query(sql, [p.id, p.name, p.price, p.category]);
+      conn.release();
+      return result.rows[0]; 
+    } catch(err){
+      throw new Error(`Could not update ${err}`)
+    }
+  }
   // DELETE Product
   async delete(id:string):Promise<Product> {
     try {
